@@ -1,0 +1,14 @@
+APP_ALLOWED_ORIGINS="http://localhost:3000,http://127.0.0.1:3000,http://192.168.8.96:3000"
+NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+
+# Backend auth + database (required by backend auth code imported into Next.js route handlers)
+DATABASE_URL=postgres://d669024832b3e4ec982932fccba16ae25971d3b5b3b0699f17ff60b48f413ea8:sk_lzlWbgsZe8iVsg2xARnnk@db.prisma.io:5432/postgres?sslmode=require
+FARMVISION_JWT_SECRET="replace-with-a-long-random-secret-for-development"
+
+# Local SMTP (MailHog on port 1025 by default; set empty to disable email in dev)
+SMTP_HOST="localhost"
+SMTP_PORT="1025"
+SMTP_USER="test"
+SMTP_PASSWORD="test"
+SMTP_FROM="no-reply@farmvision.local"
+SMTP_SECURE="false"
