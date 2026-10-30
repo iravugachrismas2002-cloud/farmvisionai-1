@@ -1,12 +1,11 @@
-"use client";
-
 import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 /**
- * Merge CSS classes safely (uses clsx only, no tailwind-merge dependency)
+ * Merge class names, resolving conflicting Tailwind utilities (shadcn/ui standard).
  */
 export function cn(...inputs: ClassValue[]) {
-  return clsx(inputs);
+  return twMerge(clsx(inputs));
 }
 
 /**
@@ -35,6 +34,21 @@ export function formatDateTime(date: string | Date, options?: Intl.DateTimeForma
     minute: "2-digit",
     ...options,
   });
+}
+
+/**
+ * Short relative time such as "just now", "14 min ago" or "3 d ago".
+ */
+export function formatRelativeTime(date: string | Date, now: Date = new Date()): string {
+  const then = typeof date === "string" ? new Date(date) : date;
+  const seconds = Math.round((now.getTime() - then.getTime()) / 1000);
+  if (seconds < 45) return "just now";
+  const minutes = Math.round(seconds / 60);
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} h ago`;
+  const days = Math.round(hours / 24);
+  return `${days} d ago`;
 }
 
 /**

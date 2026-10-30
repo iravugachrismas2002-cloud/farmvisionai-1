@@ -3,6 +3,8 @@ import { fileURLToPath } from "node:url";
 
 const nextConfig: NextConfig = {
   distDir: ".next",
+  // Keep the dev badge clear of the sidebar user menu.
+  devIndicators: { position: "bottom-right" },
   turbopack: {
     // The workspace root contains the hoisted Next.js dependency. A local
     // workspace boundary prevents discovery from walking into C:\Users\user.

@@ -1,5 +1,10 @@
-import Link from "next/link";
-import { EmailVerification } from "../../../src/components/auth/auth-form";
+import type { Metadata } from "next";
+import { AlertCircle } from "lucide-react";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { EmailVerification } from "@/components/auth/auth-form";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+export const metadata: Metadata = { title: "Verify email" };
 
 export default async function VerifyEmailPage({
   searchParams,
@@ -10,23 +15,23 @@ export default async function VerifyEmailPage({
   const token = typeof params.token === "string" ? params.token : "";
 
   return (
-    <main className="auth-page">
-      <Link className="brand auth-brand" href="/">
-        <span className="brand-mark" aria-hidden="true">F</span>
-        <span>FarmVision<span className="brand-ai"> AI</span></span>
-      </Link>
-      <section className="auth-card">
-        <p className="eyebrow">EMAIL VERIFICATION</p>
-        <h1>Confirm your email</h1>
-        {token ? (
-          <EmailVerification token={token} />
-        ) : (
-          <p className="auth-message auth-message-error" role="alert">
+    <AuthShell
+      eyebrow="Email verification"
+      title="Confirm your email"
+      backHref="/login"
+      backLabel="Return to sign in"
+    >
+      {token ? (
+        <EmailVerification token={token} />
+      ) : (
+        <Alert variant="destructive">
+          <AlertCircle aria-hidden="true" />
+          <AlertTitle>Link is incomplete</AlertTitle>
+          <AlertDescription>
             This verification link is missing its token. Open the complete link from your email.
-          </p>
-        )}
-      </section>
-      <p className="auth-footer"><Link href="/login">Return to sign in</Link></p>
-    </main>
+          </AlertDescription>
+        </Alert>
+      )}
+    </AuthShell>
   );
 }

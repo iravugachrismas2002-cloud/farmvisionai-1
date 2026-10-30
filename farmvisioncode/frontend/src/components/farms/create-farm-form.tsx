@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { Card, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/forms";
-import { Alert } from "@/components/ui/alert";
+import { Card, CardHeader } from "@/components/legacy/card";
+import { Button } from "@/components/legacy/button";
+import { Input } from "@/components/legacy/forms";
+import { Alert } from "@/components/legacy/alert";
 
 type CreateFarmResponse = {
   error?: string;

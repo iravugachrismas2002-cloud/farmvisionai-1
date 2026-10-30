@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/legacy/button";
 import { ActuatorStateBadge, ActuatorState } from "@/components/ui/actuator-state-badge";
 
 type ActuatorType = "PUMP" | "FAN" | "LIGHT" | "VALVE" | "MOTOR" | "HEATER";

@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { ShellHeader } from "@/components/ui/shell-header";
 import { ShellSidebar } from "@/components/ui/shell-sidebar";
-import { Card, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardHeader } from "@/components/legacy/card";
+import { Button } from "@/components/legacy/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ActuatorStateBadge } from "@/components/ui/actuator-state-badge";
 

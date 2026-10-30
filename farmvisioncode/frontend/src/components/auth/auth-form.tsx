@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { Card, CardHeader } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/forms";
-import { Alert } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/auth/password-input";
+import { FormMessage } from "@/components/auth/form-message";
 
 type AuthMode = "login" | "register";
 
@@ -30,7 +32,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     setIsError(false);
     setIsSubmitting(true);
 
-    const data = new FormData(event.currentTarget);
+    const data = new FormData(form);
     const payload = isRegistration
       ? {
           firstName: String(data.get("firstName") ?? ""),
@@ -54,9 +56,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       if (!response.ok) {
         setIsError(true);
         setMessage(
-          result.issues?.[0]?.message ??
-            result.error ??
-            "The request could not be completed.",
+          result.issues?.[0]?.message ?? result.error ?? "The request could not be completed.",
         );
         return;
       }
@@ -73,99 +73,93 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   }
 
   return (
-    <Card className="auth-card">
-      <CardHeader
-        title={
-          <div>
-            <p className="eyebrow">{isRegistration ? "JOIN FARMVISION" : "WELCOME BACK"}</p>
-            <h1 className="mb-2">{isRegistration ? "Create a farmer account" : "Sign in to FarmVision"}</h1>
-          </div>
-        }
-      />
-      <form className="auth-form" onSubmit={handleSubmit}>
-        {isRegistration ? (
-          <div className="auth-name-row">
+    <form className="space-y-5" onSubmit={handleSubmit} noValidate={false}>
+      {isRegistration ? (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="firstName">First name</Label>
             <Input
-              label="First name"
-              placeholder="Enter your first name"
+              id="firstName"
               name="firstName"
+              placeholder="Jane"
               autoComplete="given-name"
               maxLength={80}
               required
             />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="lastName">Last name</Label>
             <Input
-              label="Last name"
-              placeholder="Enter your last name"
+              id="lastName"
               name="lastName"
+              placeholder="Mukamana"
               autoComplete="family-name"
               maxLength={80}
               required
             />
           </div>
-        ) : null}
+        </div>
+      ) : null}
+
+      <div className="space-y-2">
+        <Label htmlFor="email">Email address</Label>
         <Input
-          label="Email address"
-          placeholder="you@farm.com"
+          id="email"
           name="email"
           type="email"
+          placeholder="you@farm.com"
           autoComplete="email"
           required
         />
-        <Input
-          label="Password"
-          placeholder="••••••••••••"
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">Password</Label>
+          {!isRegistration ? (
+            <Link
+              href="/forgot-password"
+              className="text-sm text-muted-foreground transition-colors hover:text-primary"
+            >
+              Forgot password?
+            </Link>
+          ) : null}
+        </div>
+        <PasswordInput
+          id="password"
           name="password"
-          type="password"
+          placeholder={isRegistration ? "At least 12 characters" : "Your password"}
           autoComplete={isRegistration ? "new-password" : "current-password"}
           minLength={isRegistration ? 12 : 1}
           maxLength={128}
           required
         />
-        {isRegistration && (
-          <p className="auth-hint">Use at least 12 characters.</p>
-        )}
-
-        {message ? (
-          <Alert
-            severity={isError ? "error" : "success"}
-            title={isError ? "Error" : "Success"}
-            description={message}
-          />
+        {isRegistration ? (
+          <p className="text-xs text-muted-foreground">Use at least 12 characters.</p>
         ) : null}
+      </div>
 
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          variant="primary"
-          className="auth-submit"
-        >
-          {isSubmitting
-            ? "Please wait…"
-            : isRegistration
-              ? "Create farmer account"
-              : "Sign in"}
-        </Button>
+      {message ? <FormMessage isError={isError} message={message} /> : null}
 
-        <p className="auth-switch">
-          {isRegistration ? "Already have an account?" : "New to FarmVision?"}{" "}
-          <Link href={isRegistration ? "/login" : "/register"}>
-            {isRegistration ? "Sign in" : "Create an account"}
-          </Link>
-        </p>
-      </form>
-    </Card>
+      <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}
+        {isSubmitting ? "Please wait…" : isRegistration ? "Create farmer account" : "Sign in"}
+      </Button>
+    </form>
   );
 }
 
 export function EmailVerification({ token }: { token: string }) {
   const [message, setMessage] = useState("Verifying your email…");
   const [isError, setIsError] = useState(false);
+  const [isPending, setIsPending] = useState(true);
   const [hasVerified, setHasVerified] = useState(false);
   const verificationStarted = useRef(false);
 
   const verify = useCallback(async () => {
     setMessage("Verifying your email…");
     setIsError(false);
+    setIsPending(true);
     try {
       const response = await fetch("/api/auth/verify-email", {
         method: "POST",
@@ -183,6 +177,8 @@ export function EmailVerification({ token }: { token: string }) {
     } catch {
       setIsError(true);
       setMessage("FarmVision could not be reached. Check the connection and try again.");
+    } finally {
+      setIsPending(false);
     }
   }, [token]);
 
@@ -193,29 +189,27 @@ export function EmailVerification({ token }: { token: string }) {
   }, [verify]);
 
   return (
-    <div className="verification-status">
-      <Alert
-        severity={isError ? "error" : "success"}
-        title={isError ? "Verification failed" : hasVerified ? "Email verified" : "Verifying…"}
-        description={message}
-      />
-      {isError && !hasVerified ? (
-        <Button
-          variant="secondary"
-          onClick={() => void verify()}
-          type="button"
-          className="mt-4"
-        >
+    <div className="space-y-5">
+      {isPending ? (
+        <div className="flex items-center gap-3 rounded-lg border bg-card px-4 py-3 text-sm" role="status">
+          <Loader2 className="size-4 animate-spin text-primary" aria-hidden="true" />
+          {message}
+        </div>
+      ) : (
+        <FormMessage
+          isError={isError}
+          title={isError ? "Verification failed" : "Email verified"}
+          message={message}
+        />
+      )}
+      {isError && !hasVerified && !isPending ? (
+        <Button variant="outline" type="button" onClick={() => void verify()} className="w-full">
           Try again
         </Button>
       ) : null}
       {hasVerified ? (
-        <Button
-          variant="primary"
-          href="/login"
-          className="mt-4"
-        >
-          Continue to sign in
+        <Button asChild size="lg" className="w-full">
+          <Link href="/login">Continue to sign in</Link>
         </Button>
       ) : null}
     </div>

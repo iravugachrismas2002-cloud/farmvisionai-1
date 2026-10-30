@@ -1,25 +1,29 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { AuthForm } from "../../src/components/auth/auth-form";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { AuthForm } from "@/components/auth/auth-form";
+
+export const metadata: Metadata = { title: "Create account" };
 
 export default function RegisterPage() {
   return (
-    <main className="auth-page">
-      <Link className="brand auth-brand" href="/">
-        <span className="brand-mark" aria-hidden="true">F</span>
-        <span>FarmVision<span className="brand-ai"> AI</span></span>
-      </Link>
-      <section className="auth-card">
-        <p className="eyebrow">JOIN FARMVISION</p>
-        <h1>Create a farmer account</h1>
-        <p className="auth-intro">
-          Register with your email. You’ll need to verify the address and wait for administrator approval before signing in.
-        </p>
-        <AuthForm mode="register" />
-        <p className="auth-policy">
-          Registration is currently for farmers. Other roles require administrator assignment.
-        </p>
-      </section>
-      <p className="auth-footer"><Link href="/">← Back to FarmVision</Link></p>
-    </main>
+    <AuthShell
+      eyebrow="Join FarmVision"
+      title="Create a farmer account"
+      description="Verify your email, then wait for administrator approval before signing in."
+      footer={
+        <>
+          Already have an account?{" "}
+          <Link href="/login" className="font-medium text-primary hover:underline">
+            Sign in
+          </Link>
+          <span className="mt-3 block text-xs">
+            Registration is currently for farmers. Other roles are assigned by an administrator.
+          </span>
+        </>
+      }
+    >
+      <AuthForm mode="register" />
+    </AuthShell>
   );
 }

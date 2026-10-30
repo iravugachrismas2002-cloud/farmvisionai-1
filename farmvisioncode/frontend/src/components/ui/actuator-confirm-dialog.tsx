@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/legacy/button";
 import { ActuatorStateBadge } from "@/components/ui/actuator-state-badge";
 
 const Dialog = DialogPrimitive.Root;
