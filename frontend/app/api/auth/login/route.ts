@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { ApprovalStatus } from "../../../../../backend/src/generated/prisma/enums";
 import { SESSION_COOKIE_NAME, SESSION_MAX_AGE_SECONDS } from "../../../../../backend/src/server/auth/oauth-state";
 import { isTrustedAuthRequest } from "../../../../../backend/src/server/auth/request";
 import { createApplicationSession } from "../../../../../backend/src/server/auth/session";
@@ -34,23 +33,6 @@ export async function POST(request: Request) {
   const user = await findUserByEmail(parsed.data.email);
   if (!user?.passwordHash || !(await verifyPassword(parsed.data.password, user.passwordHash))) {
     return NextResponse.json({ error: "Email or password is incorrect." }, { status: 401 });
-  }
-
-  if (!user.emailVerified) {
-    return NextResponse.json(
-      { error: "Verify your email address before signing in." },
-      { status: 403 },
-    );
-  }
-  if (user.approvalStatus !== ApprovalStatus.APPROVED) {
-    return NextResponse.json(
-      {
-        error: user.approvalStatus === ApprovalStatus.REJECTED
-          ? "This account was not approved. Contact the FarmVision administrator."
-          : "Your email is verified. Your account is awaiting administrator approval.",
-      },
-      { status: 403 },
-    );
   }
 
   const sessionToken = await createApplicationSession(user.id);

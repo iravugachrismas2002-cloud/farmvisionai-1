@@ -10,7 +10,7 @@ export default function RegisterPage() {
     <AuthShell
       eyebrow="Join FarmVision"
       title="Create a farmer account"
-      description="Verify your email, then wait for administrator approval before signing in."
+      description="Create an account to start using FarmVision."
       footer={
         <>
           Already have an account?{" "}

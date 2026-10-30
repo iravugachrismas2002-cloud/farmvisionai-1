@@ -7,7 +7,6 @@ import { ApprovalStatus, FarmVisionRole } from "../../generated/prisma/enums";
 
 const scryptAsync = promisify(scrypt);
 const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000;
-const EMAIL_VERIFICATION_TTL_MS = 24 * 60 * 60 * 1000;
 
 type MailTransport = {
   sendMail(options: SendMailOptions): Promise<unknown>;
@@ -125,7 +124,6 @@ export async function createUser({
   const salt = randomBytes(16).toString("hex");
   const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer;
   const passwordHash = `${salt}:${derivedKey.toString("hex")}`;
-  const verificationToken = generateVerificationToken();
   const openId = randomBytes(16).toString("hex");
 
   const user = await getPrismaClient().user.create({
@@ -134,9 +132,10 @@ export async function createUser({
       openId,
       passwordHash,
       name: `${firstName.trim()} ${lastName.trim()}`.trim(),
-      approvalStatus: ApprovalStatus.PENDING,
-      verificationToken,
-      verificationExpiresAt: new Date(Date.now() + EMAIL_VERIFICATION_TTL_MS),
+      approvalStatus: ApprovalStatus.APPROVED,
+      emailVerified: new Date(),
+      verificationToken: null,
+      verificationExpiresAt: null,
       roles: {
         create: { role },
       },
@@ -150,11 +149,10 @@ export async function createUser({
       roles: {
         select: { role: true },
       },
-      verificationToken: true,
     },
   });
 
-  return { user, verificationToken };
+  return user;
 }
 
 export async function verifyEmail(token: string) {

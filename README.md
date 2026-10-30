@@ -18,9 +18,9 @@ Create a local environment file from the template and fill in values on your own
 Copy-Item frontend/.env.example frontend/.env
 ```
 
-Set `DATABASE_URL` to a PostgreSQL database dedicated to FarmVision development, `APP_ALLOWED_ORIGINS` to the exact browser origin used for local sign-in, and `FARMVISION_JWT_SECRET` to a unique random secret. Configure `NEXT_PUBLIC_BASE_URL` and the `SMTP_*` settings with a real mail provider before enabling verification, password-reset, or account-approval email flows. The template contains placeholders only. Do not commit `.env` or paste credentials into source files.
+Set `DATABASE_URL` to a PostgreSQL database dedicated to FarmVision development, `APP_ALLOWED_ORIGINS` to the exact browser origin used for local sign-in, and `FARMVISION_JWT_SECRET` to a unique random secret. Configure `NEXT_PUBLIC_BASE_URL` and the `SMTP_*` settings with a real mail provider before enabling password-reset or account-approval email flows. The template contains placeholders only. Do not commit `.env` or paste credentials into source files.
 
-The landing page links to `/login` and `/register`. Registration is Farmer-only, requires email verification and administrator approval, and sends verification mail through the configured SMTP provider. Sign-in is enabled only after both verification and approval. For LAN preview, set `APP_ALLOWED_ORIGINS` and `NEXT_PUBLIC_BASE_URL` to the exact origin in the browser address bar (for example, `http://192.168.99.179:3000`). `allowedDevOrigins` permits that development host for Next.js HMR/font resources; restart `npm run dev` after changing Next.js configuration.
+The landing page links to `/login` and `/register`. Farmer registration creates an immediately usable account; email verification and administrator approval are not required to sign in. SMTP configuration is still needed for email-dependent flows such as password reset. For LAN preview, set `APP_ALLOWED_ORIGINS` and `NEXT_PUBLIC_BASE_URL` to the exact origin in the browser address bar (for example, `http://192.168.99.179:3000`). `allowedDevOrigins` permits that development host for Next.js HMR/font resources; restart `npm run dev` after changing Next.js configuration.
 
 Install dependencies after setting `DATABASE_URL`:
 

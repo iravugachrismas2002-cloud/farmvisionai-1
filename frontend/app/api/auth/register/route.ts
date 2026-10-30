@@ -2,10 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { FarmVisionRole } from "../../../../../backend/src/generated/prisma/enums";
 import { isTrustedAuthRequest } from "../../../../../backend/src/server/auth/request";
-import {
-  createUser,
-  sendVerificationEmail,
-} from "../../../../../backend/src/server/auth/service";
+import { createUser } from "../../../../../backend/src/server/auth/service";
 
 const registrationSchema = z.object({
   firstName: z.string().trim().min(1).max(80),
@@ -65,21 +62,10 @@ export async function POST(request: Request) {
     throw error;
   }
 
-  let emailSent = true;
-  try {
-    await sendVerificationEmail(parsed.data.email, created.verificationToken);
-  } catch {
-    emailSent = false;
-  }
-
   return NextResponse.json(
     {
-      message: emailSent
-        ? "Registration received. Check your email to verify your account. Sign-in is available after verification and account approval."
-        : "Account created. Email delivery is not configured locally. Use the verification token below to verify via /api/auth/verify-email, then an administrator can approve your account.",
-      email: created.user.email,
-      emailSent,
-      ...(!emailSent ? { verificationToken: created.verificationToken } : {}),
+      message: "Account created. You can now sign in.",
+      email: created.email,
     },
     { status: 201 },
   );
