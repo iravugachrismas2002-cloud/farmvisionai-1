@@ -4,6 +4,7 @@ import { BrandLogo } from "@/components/brand-logo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import AskFarmVisionAI from "@/components/dashboard/ask-farmvisionai";
 
 const capabilities = [
   {
@@ -153,7 +154,9 @@ export default function Page() {
         </section>
       </main>
 
-      <footer className="border-t border-border/60">
+      <AskFarmVisionAI />
+
+        <footer className="border-t border-border/60">
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 px-5 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:px-8">
           <BrandLogo />
           <span>Agricultural intelligence, built around the farmer.</span>
