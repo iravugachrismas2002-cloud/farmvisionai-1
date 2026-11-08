@@ -28,7 +28,7 @@ export function AppSidebar({ user }: { user: AppUser }) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild tooltip="FarmVision AI">
-              <Link href="/dashboard">
+              <Link href="/ask-farmvisionai">
                 <span className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                   <Sprout className="size-4" />
                 </span>

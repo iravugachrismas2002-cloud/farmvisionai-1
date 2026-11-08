@@ -34,7 +34,10 @@ export type NavSection = {
 export const NAV_SECTIONS: NavSection[] = [
   {
     label: "Overview",
-    items: [{ title: "Dashboard", href: "/dashboard", icon: LayoutDashboard }],
+    items: [
+      { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { title: "Ask FarmVision AI", href: "/ask-farmvisionai", icon: Brain },
+    ],
   },
   {
     label: "Operations",
