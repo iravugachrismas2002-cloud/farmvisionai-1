@@ -1,5 +1,3 @@
-// **CRITICAL: This file must be a Client Component because it uses usePathname, useRouter, and useState hooks**
-
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -22,7 +20,7 @@ export default function AskFarmVisionAI() {
   // Auto-focus on mount
   useEffect(() => {
     const defer = setTimeout(() => {
-      const inputEl = document.querySelector('input[placeholder*="Ask"]');
+      const inputEl = document.querySelector('input[placeholder*="Ask"]') as HTMLInputElement | null;
       if (inputEl) inputEl.focus();
     }, 300);
     return () => clearTimeout(defer);
@@ -43,7 +41,12 @@ export default function AskFarmVisionAI() {
     e?.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    const newQuestion = {
+    const newQuestion: {
+      id: string;
+      question: string;
+      answer: string;
+      status: "pending" | "complete" | "error";
+    } = {
       id: Date.now().toString(),
       question: input,
       answer: "",
@@ -51,8 +54,8 @@ export default function AskFarmVisionAI() {
     };
 
     setIsLoading(true);
-    setQuestions((prev) => {
-      const updated = [...prev, newQuestion];
+    setQuestions((prevQuestions) => {
+      const updated = [...prevQuestions, newQuestion];
       return updated.length > MAX_QUESTIONS ? updated.slice(-MAX_QUESTIONS) : updated;
     });
     setInput("");
@@ -69,21 +72,25 @@ export default function AskFarmVisionAI() {
       const data = await response.json();
       const answer = data.answer || "No response from AI";
 
-      setQuestions((prev) => {
-        return prev.map((q) =>
-          q.id === newQuestion.id ? { ...q, answer, status: "complete" } : q
+      setQuestions((prevQuestions) => {
+        return prevQuestions.map((q) =>
+          q.id === newQuestion.id
+            ? { ...q, answer, status: "complete" as const }
+            : q
         );
       });
     } catch (error) {
-      setQuestions((prev) =>
-        prev.map((q) =>
-          q.id === newQuestion.id ? { ...q, answer: "Error: Failed to get AI response", status: "error" } : q
+      setQuestions((prevQuestions) =>
+        prevQuestions.map((q) =>
+          q.id === newQuestion.id
+            ? { ...q, answer: "Error: Failed to get AI response", status: "error" as const }
+            : q
         )
       );
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, router, input]);
+  }, [input, isLoading]);
 
   const suggestedQuestions = [
     "What is the current feed level?",
