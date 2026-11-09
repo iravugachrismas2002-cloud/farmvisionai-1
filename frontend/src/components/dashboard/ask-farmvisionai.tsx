@@ -15,7 +15,7 @@ export default function AskFarmVisionAI() {
   >([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const router = usePathname();
+  const router = useRouter();
 
   // Auto-focus on mount
   useEffect(() => {
